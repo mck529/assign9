@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Scrabble</title>
+    <link type="text/css" rel="stylesheet" href="css/a9.css"></link>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script src="js/a9.js"></script>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="title">
+        </div>
+      <div id="board">
+        </div>
+      <br><br>
+      <div id="rack">
+      </div>
+      <button type="button" onclick="submitWord()">Submit Word</button>
+      <button type="button" onclick="resetRack()">Reset Tiles</button>
+      <div id="word">Word being played: </div>
+      <div id="score">Current Word Score: 0</div>
+      <div id="totalScore">Total Score: 0</div>
+      <div id="message"></div>
+    </div>
+  </body>
+</html>

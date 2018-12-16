@@ -1,0 +1,35 @@
+body, html {
+  height: 100%;
+  margin: 0;
+}
+
+.board_blocks {
+  width: 50px;
+  height: 50px;
+  margin: 0px;
+}
+
+.rack_blocks {
+  width: 50px;
+  height: 50px;
+}
+
+#rack {
+  background-image: url(../img/rack.png);
+  width: 350px;
+}
+
+.title_blocks {
+  width: 70px;
+  height: 70px;
+}
+
+table {
+  border-collapse: collapse;
+  cellspace: 0;
+}
+
+#wrapper {
+  background: linear-gradient(to right, #f7fbfc 0%,#d9edf2 40%,#add9e4 100%);
+  height: 100%;
+}
