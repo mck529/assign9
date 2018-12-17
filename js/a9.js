@@ -75,13 +75,7 @@ function removePlayed() {
       $(this).remove();
     }
   });
-  for (var i = 0; i < temp.length; i++) {
-    for (var j = 0; j < scores.length; j++) {
-      if(temp[i] == scores[j].letter) {
-        scores[j].amount++;
-      }
-    }
-  }
+
   generateRack(temp.length);
 }
 
@@ -91,6 +85,22 @@ function resetTiles() {
   }
 }
 
+function newTiles() {
+  var temp = "";
+  $("#rack img").each(function(index) {
+    temp += $(this).attr('id');
+    $(this).remove();
+  });
+  for (var i = 0; i < temp.length; i++) {
+    for (var j = 0; j < scores.length; j++) {
+      if(temp[i] == scores[j].letter) {
+        scores[j].amount++;
+      }
+    }
+  }
+  generateRack(7);
+}
+
 function restartGame() {
   var temp = "";
   $("#rack img").each(function(index) {
@@ -98,7 +108,9 @@ function restartGame() {
     $(this).remove();
   });
   resetTiles();
-  generateRack();
+  generateRack(7);
+  totalScore = 0;
+  $("#totalScore").html("Total Score: 0");
   clearWord();
 }
 
@@ -121,7 +133,7 @@ function clearWord(){
   wordRow = 0;
   wordColumn = 0;
   $("#word").html("Current Word is: ");
-  $("#score").html("Current Round Score is: 0");
+  $("#score").html("Current Word Score is: 0");
 }
 
 function reformRack(letters, restart) {
