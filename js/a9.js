@@ -1,32 +1,32 @@
 
 var scores = [
-    {"letter": "A", "value": 1, "amount": 9},
-    {"letter": "B", "value": 3, "amount": 2},
-    {"letter": "C", "value": 3, "amount": 2},
-    {"letter": "D", "value": 2, "amount": 4},
-    {"letter": "E", "value": 1, "amount": 12},
-    {"letter": "F", "value": 4, "amount": 2},
-    {"letter": "G", "value": 2, "amount": 3},
-    {"letter": "H", "value": 4, "amount": 2},
-    {"letter": "I", "value": 1, "amount": 9},
-    {"letter": "J", "value": 8, "amount": 1},
-    {"letter": "K", "value": 5, "amount": 1},
-    {"letter": "L", "value": 1, "amount": 4},
-    {"letter": "M", "value": 3, "amount": 2},
-    {"letter": "N", "value": 1, "amount": 5},
-    {"letter": "O", "value": 1, "amount": 8},
-    {"letter": "P", "value": 3, "amount": 2},
-    {"letter": "Q", "value": 10, "amount": 1},
-    {"letter": "R", "value": 1, "amount": 6},
-    {"letter": "S", "value": 1, "amount": 4},
-    {"letter": "T", "value": 1, "amount": 6},
-    {"letter": "U", "value": 1, "amount": 4},
-    {"letter": "V", "value": 4, "amount": 2},
-    {"letter": "W", "value": 4, "amount": 2},
-    {"letter": "X", "value": 8, "amount": 1},
-    {"letter": "Y", "value": 4, "amount": 2},
-    {"letter": "Z", "value": 10, "amount": 1},
-    {"letter": "_", "value": 0, "amount": 2}
+    {"letter": "A", "value": 1, "amount": 9, "init": 9},
+    {"letter": "B", "value": 3, "amount": 2, "init": 2},
+    {"letter": "C", "value": 3, "amount": 2, "init": 2},
+    {"letter": "D", "value": 2, "amount": 4, "init": 4},
+    {"letter": "E", "value": 1, "amount": 12, "init": 12},
+    {"letter": "F", "value": 4, "amount": 2, "init": 2},
+    {"letter": "G", "value": 2, "amount": 3, "init": 3},
+    {"letter": "H", "value": 4, "amount": 2, "init": 2},
+    {"letter": "I", "value": 1, "amount": 9, "init": 9},
+    {"letter": "J", "value": 8, "amount": 1, "init": 1},
+    {"letter": "K", "value": 5, "amount": 1, "init": 1},
+    {"letter": "L", "value": 1, "amount": 4, "init": 4},
+    {"letter": "M", "value": 3, "amount": 2, "init": 2},
+    {"letter": "N", "value": 1, "amount": 5, "init": 5},
+    {"letter": "O", "value": 1, "amount": 8, "init": 8},
+    {"letter": "P", "value": 3, "amount": 2, "init": 2},
+    {"letter": "Q", "value": 10, "amount": 1, "init": 1},
+    {"letter": "R", "value": 1, "amount": 6, "init": 6},
+    {"letter": "S", "value": 1, "amount": 4, "init": 4},
+    {"letter": "T", "value": 1, "amount": 6, "init": 6},
+    {"letter": "U", "value": 1, "amount": 4, "init": 4},
+    {"letter": "V", "value": 4, "amount": 2, "init": 2},
+    {"letter": "W", "value": 4, "amount": 2, "init": 2},
+    {"letter": "X", "value": 8, "amount": 1, "init": 1},
+    {"letter": "Y", "value": 4, "amount": 2, "init": 2},
+    {"letter": "Z", "value": 10, "amount": 1, "init": 1},
+    {"letter": "_", "value": 0, "amount": 2, "init": 2}
 ];
 
 var word = [
@@ -36,13 +36,14 @@ var word = [
   {"letter": "*", "tile_type": "EMP", "rowNum": "0", "spaceNum": "0"},
   {"letter": "*", "tile_type": "EMP", "rowNum": "0", "spaceNum": "0"},
   {"letter": "*", "tile_type": "EMP", "rowNum": "0", "spaceNum": "0"},
+  {"letter": "*", "tile_type": "EMP", "rowNum": "0", "spaceNum": "0"},
+  {"letter": "*", "tile_type": "EMP", "rowNum": "0", "spaceNum": "0"},
   {"letter": "*", "tile_type": "EMP", "rowNum": "0", "spaceNum": "0"}
 ];
 var wordCount = 0;
-
-var lettersOnDeck = 0;
-var tilesOnBoard = 0;
 var totalScore = 0;
+var wordRow = 0;
+var wordColumn = 0;
 
 function printWord() {
   var temp = "";
@@ -60,10 +61,46 @@ function resetRack() {
   });
   reformRack(temp);
   wordCount = 0;
+  wordRow = 0;
+  wordColumn = 0;
   clearWord();
 }
 
+function removePlayed() {
+  var temp = "";
+  $("#rack img").each(function(index) {
+    if($(this).hasClass("ui-draggable-disabled")) {
+      console.log($(this).attr('id'));
+      temp += $(this).attr('id');
+      $(this).remove();
+    }
+  });
+  for (var i = 0; i < temp.length; i++) {
+    for (var j = 0; j < scores.length; j++) {
+      if(temp[i] == scores[j].letter) {
+        scores[j].amount++;
+      }
+    }
+  }
+  generateRack(temp.length);
+}
 
+function resetTiles() {
+  for(var i = 0; i < scores.length; i++) {
+    scores[i].amount = scores[i].init;
+  }
+}
+
+function restartGame() {
+  var temp = "";
+  $("#rack img").each(function(index) {
+    temp += $(this).attr('id');
+    $(this).remove();
+  });
+  resetTiles();
+  generateRack();
+  clearWord();
+}
 
 function findWord( word ) {
   console.log(word);
@@ -80,26 +117,36 @@ function clearWord(){
     word[i].rowNum = 0;
     word[i].spaceNum = 0;
   }
+  wordCount = 0;
+  wordRow = 0;
+  wordColumn = 0;
   $("#word").html("Current Word is: ");
   $("#score").html("Current Round Score is: 0");
 }
 
-function reformRack(letters) {
+function reformRack(letters, restart) {
   var letter, tileSrc;
   console.log(letters);
   for (var i = 0; i < letters.length; i++) {
     letter = letters[i];
     tileSrc = "<img id=\"" + letter + "\" class=\"rack_blocks\" src=\"img/Scrabble_Tiles/Scrabble_Tile_" + letter + ".jpg\">";
     $("#rack").append(tileSrc);
-    lettersOnDeck++;
   }
   setDragAndDrop();
+}
+
+function addToScore() {
+  totalScore += updateScore(true);
+  $("#totalScore").html("Total Score: " + totalScore);
 }
 
 function submitWord() {
   var temp = printWord().toLowerCase();
   if(findWord(temp)) {
     $("#message").html("Your word is correct! Your score has been updated.");
+    addToScore();
+    removePlayed();
+    clearWord();
   } else {
     $("#message").html("Your word is invalid. Please try again.");
     resetRack();
@@ -127,35 +174,37 @@ function selectTile() {
     return random;
 }
 
-function generateRack() {
+function generateRack(numTilesToAdd) {
   var letter, random, tileSrc;
-  var numNewTiles = 7 - lettersOnDeck;
-  for (var i = 1; i <= numNewTiles; i++) {
+  for (var i = 1; i <= numTilesToAdd; i++) {
     random = selectTile();
     letter = scores[random].letter;
     scores[random].amount--;
     console.log("Selected letter tile: " + scores[random].letter + " Only " + scores[random].amount + " remain.");
     tileSrc = "<img id=\"" + letter + "\" class=\"rack_blocks\" src=\"img/Scrabble_Tiles/Scrabble_Tile_" + letter + ".jpg\">";
     $("#rack").append(tileSrc);
-    lettersOnDeck++;
   }
   setDragAndDrop();
-}
-
-function subFromRack(){
-  lettersOnDeck--;
-  console.log("Current letters on rack: " + lettersOnDeck);
-}
-
-function addToRack(){
-  lettersOnDeck++;
-  console.log("Current letters on rack: " + lettersOnDeck);
 }
 
 function updateWord(){
   $("#word").html(printWord());
   updateScore(false);
   console.log("Updated word.");
+}
+
+function sortWord(){
+  if(word[wordCount].spaceNum < word[0].spaceNum || word[wordCount].rowNum < word[0].rowNum) {
+    console.log(word[wordCount].spaceNum + " < " + word[0].spaceNum + " OR " + word[wordCount].rowNum + " < " + word[0].rowNum)
+    for (var i = wordCount; i >= 0; i--) {
+      word[i + 1].spaceNum = word[i].spaceNum;
+      word[i + 1].rowNum = word[i].rowNum;
+      word[i + 1].letter = word[i].letter;
+    }
+    word[0].letter = word[wordCount + 1].letter;
+    word[0].spaceNum = word[wordCount + 1].spaceNum;
+    word[0].rowNum = word[wordCount + 1].rowNum;
+  }
 }
 
 function updateScore(checking){
@@ -206,21 +255,11 @@ function updateScore(checking){
 
 
 function setDragAndDrop () {
-  $("#rack").droppable({accept: '.rack_blocks', drop: addToRack});
+  $("#rack").droppable({accept: '.rack_blocks'});
   $(".rack_blocks").draggable({snap: ".board_blocks", snapMode: "inner", revert: "invalid"});
-  $(".board_blocks").droppable({accept: '.rack_blocks', drop: Drop, out: Drag});
-
-  function Drag(event, ui) {
-
-    if(ui.draggable.attr('id') == word[$(this).attr("id")]) {
-      console.log("I am here");
-      word[$(this).attr("id")] = "";
-    }
-    updateWord(word);
-  }
+  $(".board_blocks").droppable({accept: '.rack_blocks', drop: Drop});
 
   function Drop(event, ui) {
-    subFromRack();
     ui.draggable.draggable({revert: "invalid"});
     var letter = ui.draggable.prop('id');
     var spaceNum = $(this).attr('id');
@@ -229,6 +268,7 @@ function setDragAndDrop () {
     var valid = true;
     if(wordCount != 0) {
       valid = checkTileSpace(event, ui, parseInt(spaceNum), parseInt(rowNum));
+      console.log(valid);
     }
     if(valid){
       word[wordCount].letter = letter;
@@ -238,33 +278,61 @@ function setDragAndDrop () {
       ui.draggable
       console.log("You placed letter tile " + letter);
       console.log("On a " + tile_type + " tile on space " + spaceNum + " in row " + rowNum);
+      if(wordCount >= 1){
+        sortWord();
+      }
       wordCount++;
+      if(wordCount == 2) {
+        if(word[0].rowNum == word[1].rowNum) {
+          wordRow = word[0].rowNum;
+          console.log(wordRow);
+        } else {
+          wordColumn = word[0].spaceNum;
+          console.log(wordColumn);
+        }
+      }
       ui.draggable.draggable({disabled: true});
-      updateWord(word);
+
+      updateWord();
     } else {
+      console.log("invalid");
       ui.draggable.draggable({revert: "valid"});
     }
 
   }
 
   function checkTileSpace(event, ui, currSpace, currRow) {
-    var check = true;
     var prevSpace = word[wordCount - 1].spaceNum;
     var prevRow = word[wordCount - 1].rowNum;
     var spaceDiff = Math.abs(currSpace - prevSpace);
     var rowDiff = Math.abs(currRow - prevRow);
+    var firstRowD = Math.abs(word[0].rowNum - currRow);
+    var firstSpaceD = Math.abs(word[0].spaceNum - currSpace);
+    if (wordRow != 0 && wordRow != currRow) {
+      return false;
+    }
+    if (wordColumn != 0 && wordColumn != currSpace) {
+      return false;
+    }
+
     if (spaceDiff == 0) {
-      if (rowDiff != 1) {
-        check = false;
+      if (rowDiff != 1 && firstRowD != 1) {
+        return false;
+      }
+      if (firstRowD == 1) {
+        return true;
       }
     } else if (rowDiff == 0) {
-      if (spaceDiff != 1) {
-        check = false;
+      if (spaceDiff != 1 && firstSpaceD != 1) {
+        return false;
+      }
+      if (firstSpaceD == 1) {
+        return true;
       }
     } else {
-      check = false;
+      return false;
     }
-    return check;
+    return true;
   }
 }
 
@@ -376,7 +444,7 @@ var dict = {};
 
 $(document).ready(function(){
   generateTitle();
-  generateRack();
+  generateRack(7);
   generateBoard();
   setDragAndDrop();
 
