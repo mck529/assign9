@@ -115,11 +115,23 @@ function restartGame() {
 }
 
 function findWord( word ) {
-  console.log(word);
+
+  if(word.includes('_')){
+    for(var i = 0; i < scores.length - 1; i++) {
+      var temp = word;
+      temp = temp.replace(/_/g, scores[i].letter.toLowerCase());
+      if (dict[temp]) {
+          return true;
+      }
+    }
+    return false;
+  } else {
     if (dict[word]) {
         return true;
     }
     return false;
+  }
+
 }
 
 function clearWord(){
@@ -178,7 +190,7 @@ function generateTitle() {
 function selectTile() {
     var validLetter = true;
     while (validLetter) {
-      random = Math.floor((Math.random() * 26));
+      random = Math.floor((Math.random() * 27));
       if(scores[random].amount != 0) {
         validLetter = false;
       }
