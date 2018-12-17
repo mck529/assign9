@@ -155,12 +155,12 @@ function addToScore() {
 function submitWord() {
   var temp = printWord().toLowerCase();
   if(findWord(temp)) {
-    $("#message").html("Your word is correct! Your score has been updated.");
+    alert("Your word is correct! Your score has been updated.");
     addToScore();
     removePlayed();
     clearWord();
   } else {
-    $("#message").html("Your word is invalid. Please try again.");
+    alert("Your word is invalid. Please try again.");
     resetRack();
   }
 
