@@ -2,6 +2,8 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Scrabble</title>
     <link type="text/css" rel="stylesheet" href="css/a9.css"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -9,7 +11,7 @@
     <script src="js/a9.js"></script>
   </head>
   <body>
-    <div id="wrapper">
+    <div id="wrapper" class="wrap">
       <div id="title">
         </div>
       <div id="board">
@@ -17,13 +19,15 @@
       <br><br>
       <div id="rack">
       </div>
-      <button type="button" onclick="submitWord()">Submit Word</button>
-      <button type="button" onclick="resetRack()">Reset Tiles</button>
-      <button type="button" onclick="newTiles()">New Tiles</button>
-      <button type="button" onclick="restartGame()">Restart Game</button>
-      <div id="word">Word being played: </div>
-      <div id="score">Current Word Score: 0</div>
-      <div id="totalScore">Total Score: 0</div>
+      <button id="submit" type="button">Submit Word</button>
+      <button id="reset" type="button">Reset Tiles</button>
+      <button id="new" type="button">New Tiles</button>
+      <button id="restart" type="button">Restart Game</button>
+      <div id="scoreboard">
+        <div id="word">Word being played: </div>
+        <div id="score">Current Word Score: 0</div>
+        <div id="totalScore">Total Score: 0</div>
+      </div>
     </div>
   </body>
 </html>

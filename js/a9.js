@@ -1,4 +1,3 @@
-
 var scores = [
     {"letter": "A", "value": 1, "amount": 9, "init": 9},
     {"letter": "B", "value": 3, "amount": 2, "init": 2},
@@ -40,11 +39,24 @@ var word = [
   {"letter": "*", "tile_type": "EMP", "rowNum": "0", "spaceNum": "0"},
   {"letter": "*", "tile_type": "EMP", "rowNum": "0", "spaceNum": "0"}
 ];
+
+var tile_types = [
+    {"type": "EMP"}, // 0
+    {"type": "TLS"}, // 1
+    {"type": "TWS"}, // 2
+    {"type": "DLS"}, // 3
+    {"type": "DWS"}, // 4
+    {"type": "SRT"}  // 5
+];
+
 var wordCount = 0;
 var totalScore = 0;
 var wordRow = 0;
 var wordColumn = 0;
+var dict = {};
 
+// function printWord
+// returns a string containing the letters inside of the word object -> words[i].letter
 function printWord() {
   var temp = "";
   for(i = 0; i < wordCount; i++) {
@@ -53,44 +65,53 @@ function printWord() {
   return temp;
 }
 
+// function resetRack
+// resets the rack, returning letters that are on the board back to the rack.
 function resetRack() {
   var temp = "";
+  // selects all images within the rack, so all of the seven letter tiles
   $("#rack img").each(function(index) {
     temp += $(this).attr('id');
     $(this).remove();
   });
   reformRack(temp);
-  wordCount = 0;
-  wordRow = 0;
-  wordColumn = 0;
   clearWord();
 }
 
+// function removePlayed
+// removes tiles played on the board ONLY, and generates new tiles to return the rack
+// back to having seven tiles in total.
 function removePlayed() {
   var temp = "";
   $("#rack img").each(function(index) {
+    // selects all letter tiles who have dragging disabled, so only tiles that have been played already
     if($(this).hasClass("ui-draggable-disabled")) {
       console.log($(this).attr('id'));
       temp += $(this).attr('id');
       $(this).remove();
     }
   });
-
   generateRack(temp.length);
 }
 
+// function resetTiles
+// resets the amount of each of the 27 different letter tiles back to default, for when a player wishes to start the game.
 function resetTiles() {
   for(var i = 0; i < scores.length; i++) {
     scores[i].amount = scores[i].init;
   }
 }
 
+// function newTiles
+// generates a new set of seven tiles for the player to use from what's available.
+// tiles currently in deck will be added back into the bag
 function newTiles() {
   var temp = "";
   $("#rack img").each(function(index) {
     temp += $(this).attr('id');
     $(this).remove();
   });
+  // adds tiles that were currently in use back into the pile
   for (var i = 0; i < temp.length; i++) {
     for (var j = 0; j < scores.length; j++) {
       if(temp[i] == scores[j].letter) {
@@ -101,6 +122,8 @@ function newTiles() {
   generateRack(7);
 }
 
+// function restartGame
+// restarts the game, clearing the score, putting all tiles back, and generating a new set of seven to start playing again.
 function restartGame() {
   var temp = "";
   $("#rack img").each(function(index) {
@@ -114,8 +137,11 @@ function restartGame() {
   clearWord();
 }
 
+// function findWord
+// finds if the word being played is inside of the dictionary.
+// if it is, it's a valid word, return true.
+// if the word is empty or the word is not in the dictionary, return false.
 function findWord( word ) {
-
   if(word.includes('_')){
     for(var i = 0; i < scores.length - 1; i++) {
       var temp = word;
@@ -126,6 +152,9 @@ function findWord( word ) {
     }
     return false;
   } else {
+    if (wordCount == 0) {
+      return false;
+    }
     if (dict[word]) {
         return true;
     }
@@ -134,6 +163,9 @@ function findWord( word ) {
 
 }
 
+// function clearWord
+// clears the word of all letters, resetting other member variables as well.
+// sets globals back to default values as well.
 function clearWord(){
   for(i = 0; i < word.length; i++) {
     word[i].letter = "*";
@@ -148,7 +180,9 @@ function clearWord(){
   $("#score").html("Current Word Score is: 0");
 }
 
-function reformRack(letters, restart) {
+//function reformRack
+//forms a rack containing the letters specified in the paramater 'letters'
+function reformRack(letters) {
   var letter, tileSrc;
   console.log(letters);
   for (var i = 0; i < letters.length; i++) {
@@ -159,11 +193,17 @@ function reformRack(letters, restart) {
   setDragAndDrop();
 }
 
+//function addToScore
+// adds current roundscore to total score, resets total score display
 function addToScore() {
   totalScore += updateScore(true);
   $("#totalScore").html("Total Score: " + totalScore);
 }
 
+//function submitWord
+// validates current word played on the board,
+// if the word is valid, the total score increases and a new rack is set
+// if the word is invalid, the tiles played go back into the rack
 function submitWord() {
   var temp = printWord().toLowerCase();
   if(findWord(temp)) {
@@ -178,7 +218,8 @@ function submitWord() {
 
 }
 
-
+//function generateTitle
+// generates a custom title that spells out "SCRABBLE" using the word tiles.
 function generateTitle() {
   var title = "SCRABBLE";
   for (var i = 0; i <= title.length - 1; i++) {
@@ -187,6 +228,8 @@ function generateTitle() {
   }
 }
 
+//function selectTile
+// randomly selects a tile from deck. if there aren't any of a certain letter left, it draws a different one.
 function selectTile() {
     var validLetter = true;
     while (validLetter) {
@@ -198,6 +241,8 @@ function selectTile() {
     return random;
 }
 
+//function generateRack
+//generates a certain number of tiles to the rack. numTilesToAdd determines how many are added to the rack.
 function generateRack(numTilesToAdd) {
   var letter, random, tileSrc;
   for (var i = 1; i <= numTilesToAdd; i++) {
@@ -211,12 +256,17 @@ function generateRack(numTilesToAdd) {
   setDragAndDrop();
 }
 
+//function updateWord
+// updates word displayed on the board with the word currently played.
 function updateWord(){
   $("#word").html(printWord());
   updateScore(false);
   console.log("Updated word.");
 }
 
+//function sortWord
+//sorts the word so that the letters go in order of rowNum or spaceNum, depending on whether the word is vertical/horizontal
+// so if we had [L][A][Y][P] as a word, and used sortWord, it would change it to [P][L][A][Y], given that P is a row/space ahead of L.
 function sortWord(){
   if(word[wordCount].spaceNum < word[0].spaceNum || word[wordCount].rowNum < word[0].rowNum) {
     console.log(word[wordCount].spaceNum + " < " + word[0].spaceNum + " OR " + word[wordCount].rowNum + " < " + word[0].rowNum)
@@ -231,6 +281,8 @@ function sortWord(){
   }
 }
 
+//function updateScore
+// updates the current round score, calculates score based on letter tiles in play, and any bonus tiles that lay under the tiles.
 function updateScore(checking){
   var roundScore = 0;
   var doubleWord = 0;
@@ -277,12 +329,16 @@ function updateScore(checking){
   }
 }
 
-
+//function setDragAndDrop
+// makes sure all letter tiles are draggable, and board tiles are droppable areas.
 function setDragAndDrop () {
   $("#rack").droppable({accept: '.rack_blocks'});
   $(".rack_blocks").draggable({snap: ".board_blocks", snapMode: "inner", revert: "invalid"});
   $(".board_blocks").droppable({accept: '.rack_blocks', drop: Drop});
 
+  //function Drop
+  //reads the tile that was just dropped onto the board, checking if it landed in a valid space.
+  // if it did, then it is stored inside the word.
   function Drop(event, ui) {
     ui.draggable.draggable({revert: "invalid"});
     var letter = ui.draggable.prop('id');
@@ -325,6 +381,10 @@ function setDragAndDrop () {
 
   }
 
+//function checkTileSpace
+// checks if the tile is in a valid location
+// 1) tiles must all line up in a single row/column
+// 2) tiles must be adjacent to one another.
   function checkTileSpace(event, ui, currSpace, currRow) {
     var prevSpace = word[wordCount - 1].spaceNum;
     var prevRow = word[wordCount - 1].rowNum;
@@ -360,15 +420,12 @@ function setDragAndDrop () {
   }
 }
 
-var tile_types = [
-    {"type": "EMP"}, // 0
-    {"type": "TLS"}, // 1
-    {"type": "TWS"}, // 2
-    {"type": "DLS"}, // 3
-    {"type": "DWS"}, // 4
-    {"type": "SRT"}  // 5
-];
 
+
+// function formRowType
+// the board has 8 different row types. this function generates all 8 of them.
+// the board has 15 rows, and they go in the order as follows
+// 1,2,3,4,5,6,7,8,7,6,5,4,3,2,1
 function formRowType(rowType, rowNum) {
   var tile_type = tile_types[0].type;
   var temp = "";
@@ -444,6 +501,8 @@ function formRowType(rowType, rowNum) {
   return temp;
 }
 
+//function generateBoard
+//dynamically creates table for the board, forming each of the 15 rows.
 function generateBoard() {
   var temp = "<table id=\"boardTable\">";
   temp += formRowType(1, 1);
@@ -464,16 +523,22 @@ function generateBoard() {
   temp += "</table>";
   $("#board").append(temp);
 }
-var dict = {};
+
 
 $(document).ready(function(){
+
+  // Bind Click Events
+  $(document).on("click", "#submit", submitWord);
+  $(document).on("click", "#reset", resetRack);
+  $(document).on("click", "#new", newTiles);
+  $(document).on("click", "#restart", restartGame);
+
   generateTitle();
   generateRack(7);
   generateBoard();
   setDragAndDrop();
 
-
-
+  // ajax request to form a dict[] to validate words with later
   $.get( "dict/dictionary.txt", function( txt ) {
       var words = txt.split( "\n" );
       for ( var i = 0; i < words.length; i++ ) {
