@@ -1,5 +1,6 @@
 Readme file for Assignment 9 - SCRABBLE for GUI Programming I
 By Michael Kusmirek
+https://mck529.github.io/assign9/
 
 Basic Functionality:
 - letter tiles are randomly selected to form player's initial hand.
